@@ -9,7 +9,8 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
+        </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
@@ -30,51 +31,70 @@
                         </tr>
                     </thead>
 
-                    
-<?php
- require_once "connection.php";
- $query="SELECT * FROM user";
- $results=mysqli_query($connect,$query);
- $dataa=mysqli_num_rows($results);
- if(mysqli_num_rows($results)==0){
-    header("location:register.php");
- }else{ 
- $data=mysqli_fetch_all($results,MYSQLI_ASSOC);
- foreach($data as $userdata){
-?>
-                    <tr>
-                        <th scope="row"><?php echo $userdata['id']; ?></th>
-                        <td><?php echo $userdata['name']; ?></td>
-                        <td><?php echo $userdata['email']; ?></td>
-                        <td><?php echo $userdata['address']; ?></td>
-                        <td><?php echo $userdata['status']; ?></td>
-                        <td>
-                            <a href="update.php?id=<?php echo $userdata['id']; ?>" class="btn btn-primary m-3">Edit</a>
-                            <a href="index.php?deleteid=<?php echo  $userdata['id']; ?>" class="btn btn-danger m-3" name="deleteuser">Delete</a>
-                        </td>
-                    </tr>
-<?php
-}
-}
-?>
+
+                    <?php
+                    require_once "connection.php";
+                    $query = "SELECT * FROM users";
+                    $results = mysqli_query($connect, $query);
+                    $dataa = mysqli_num_rows($results);
+                    if (mysqli_num_rows($results) == 0) {
+                        header("location:register.php");
+                    } else {
+                        $data = mysqli_fetch_all($results, MYSQLI_ASSOC);
+                        foreach ($data as $userdata) {
+                            ?>
+                            <tr>
+                                <th scope="row"><?php echo $userdata['id']; ?></th>
+                                <td><?php echo $userdata['name']; ?></td>
+                                <td><?php echo $userdata['email']; ?></td>
+                                <td><?php echo $userdata['address']; ?></td>
+                                <td><?php echo $userdata['status']; ?></td>
+                                <td>
+                                    <button class="btn btn-danger" data-id="<?php echo $userdata['id']; ?>">Delete</button>
+                                    <a href="update.php?id=<?php echo $userdata['id']; ?>" class="btn btn-primary m-3">Edit</a>
+                                </td>
+                            </tr>
+                            <?php
+                        }
+                    }
+                    ?>
                 </tbody>
             </table>
         </div>
 
     </section>
+    <script>
+        $(document).on('click', '.btn-danger', function (e) {
+            e.preventDefault();
+            var id = $(this).data('id');
+            $.ajax({
+                url: "deleteajax.php?deleteid=" + id,
+                type: "GET",
+                dataType: "json",
+                success: function (response) {
+                    if (response.status === "success") {
+                        location.href = "index.php";
+                    } else if (response.status === "error") {
+                        alert(response.message);
+                    }
+                }
+            })
+
+        });
+    </script>
 </body>
 
 </html>
-   <?php
-            require_once "connection.php";
-            if(isset($_GET["deleteid"])){
-               $id=$_GET['deleteid'];
-                $qryy="DELETE FROM user WHERE id='$id'";
-                $qryyresult=mysqli_query($connect,$qryy);
-                if($qryyresult>0){
-                    header("location:index.php");
-                }
-            }
+<?php
+require_once "connection.php";
+if (isset($_GET["deleteid"])) {
+    $id = $_GET['deleteid'];
+    $qryy = "DELETE FROM users WHERE id='$id'";
+    $qryyresult = mysqli_query($connect, $qryy);
+    if ($qryyresult > 0) {
+        header("location:index.php");
+    }
+}
 
 
-        ?>
+?>

@@ -9,14 +9,15 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
+        </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
     <section>
         <div class="container-md p-4 m-4">
             <div class="addform">
-                <form action="register.php" method="POST">
+                <form id="userformdata" action="register.php" method="POST">
                     <div class="row g-3">
                         <div class="col m-4">
                             <input type="text" name="name" class="form-control" placeholder="Enter Name"
@@ -24,9 +25,9 @@
                         </div>
                         <div class="col m-4">
                             <input type="email" name="email" class="form-control" placeholder="Enter  Email"
-                            aria-label="First name">
+                                aria-label="First name">
                         </div>
-                        
+
                     </div>
                     <div class="row g-3">
                         <div class="col m-4">
@@ -46,42 +47,42 @@
                                 aria-label="address">
                         </div>
                     </div>
-                    <button class="btn btn-primary m-3" type="submit" name="userdata">submit</button>
+                    <button class="btn btn-primary m-3" type="submit" name="formdata">submit</button>
+                    <div id="response"></div>
                 </form>
             </div>
         </div>
     </section>
+
+    <script>
+        $("#userformdata").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: "ajax.php",
+                type: "POST",
+                data: formData,
+
+                dataType: "json",
+                processData: false,
+                contentType: false,
+
+                beforeSend: function () {
+
+                    $("#response").html("Uploading...");
+
+                },
+                success: function (response) {
+
+                    if (response.status === "success") {
+
+                        location.href = "login.php";
+                    }
+
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
-
-<?php
-            require_once "connection.php";
-            if(isset($_POST["userdata"])){
-                $name=$_POST["name"];
-                $email=$_POST["email"];
-                $clean_password=$_POST["password"];
-                $address=$_POST["address"];
-                $status=$_POST["status"];
-                
-                
-                if(empty($name) || empty($email) || empty($address) || empty($status) || empty($clean_password)){
-                    echo " is empty";
-                }
-                else{
-                    $password = md5($clean_password);
-                    $qry="INSERT INTO user (name,email,password,address,status) VALUES ('$name','$email','$password','$address','$status')";
-                    $result=mysqli_query($connect,$qry);
-                    if($result>0){     
-                        header("Location:login.php");                                       
-                    }else{
-                        echo "data incorect";
-                    }
-                   
-                }
-            }
-
-
-        ?>
-
-

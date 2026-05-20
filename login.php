@@ -9,7 +9,8 @@
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
+        </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
@@ -17,7 +18,7 @@
         <div class="container">
             <div class="col-md">
                 <h2>plz login fill form</h2>
-                <form action="login.php" method="POST" class="row g-3">
+                <form id="loginuser" action="login.php" method="POST" class="row g-3">
 
                     <div class="col-md-6">
                         <label for="useremail" class="form-label">Email</label>
@@ -33,36 +34,47 @@
             <div class="col-12">
                 <button type="submit" m-2 p-2 class="btn btn-primary" name="loginuser">Sign in</button>
             </div>
+            <div>
+                <h2 id="response"></h2>
+            </div>
             </form>
-
-            <?php
-            require_once "connection.php";
-            if(isset($_POST["loginuser"])){
-                $email=$_POST["email"];
-                $raw_password=$_POST["password"];
-                if(empty($email) || empty($raw_password)){
-                    echo " is empty";
-                }
-                else{
-                    $password = md5($raw_password);
-                    $qry="SELECT * FROM user WHERE email='$email' AND password='$password'";                  
-                    $result=mysqli_query($connect,$qry);
-                   $data=mysqli_num_rows($result);
-                    if($data==1){     
-                        header("Location:index.php");                 
-                       
-                    }else{
-                        echo "data incorect";
-                    }
-                   
-                }
-            }
-
-
-        ?>
         </div>
         </div>
     </section>
+
+
+    <script>
+        $("#loginuser").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: "loginajax.php",
+                type: "POST",
+                data: formData,
+
+                dataType: "json",
+                processData: false,
+                contentType: false,
+
+                beforeSend: function () {
+
+                    $("#response").html("Checking...");
+
+                },
+                success: function (response) {
+
+                    if (response.status === "success") {
+                        // window.location.href = "index.php";
+                        location.href = "index.php";
+                        $("#response").html(response.message);
+                    } else if (response.status === "error") {
+                        $("#response").html(response.message);
+                    }
+
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>
