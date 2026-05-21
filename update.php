@@ -1,8 +1,8 @@
 <?php
 require_once "connection.php";
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
 
+if(isset($_GET['editid'])){
+    $id=$_GET['editid'];
     $query = "SELECT * FROM users WHERE id ='$id'";
     $results = mysqli_query($connect, $query);
     $dataa = mysqli_num_rows($results);
@@ -10,11 +10,14 @@ if (isset($_GET['id'])) {
     foreach ($data as $userdata) {
 
     }
-
+    echo json_encode([
+        'status'=>'success',
+        'message'=>'Edit data fetch successfully',
+        'data'=>$userdata
+    ]);
 }
-
-if (isset($_POST["updatedata"])) {
-    $id = $_POST["userid"];
+if(isset($_POST["updatedata"])){
+    $id=$_POST["userid"];
 
     $query = "SELECT * FROM users WHERE id ='$id'";
     $results = mysqli_query($connect, $query);
@@ -23,32 +26,30 @@ if (isset($_POST["updatedata"])) {
     foreach ($data as $userdata) {
 
     }
-    $dbpassword = $userdata['password'];
+    $dbpassword=$userdata['password'];
 
-    $name = $_POST["name"];
-    $email = $_POST["email"];
-    $oldpassword = md5($_POST["oldpassword"]);
-    $clean_password = $_POST["newpassword"];
-    $address = $_POST["address"];
-    $status = $_POST["status"];
-
-
-    if (empty($name) || empty($email) || empty($address) || empty($status) || empty($oldpassword) || empty($clean_password)) {
+    $name=$_POST["name"];
+    $email=$_POST["email"];
+    $oldpassword=md5($_POST["oldpassword"]);
+    $clean_password=$_POST["newpassword"];
+    $address=$_POST["address"];
+    $status=$_POST["status"];
+    if(empty($name) || empty($email) || empty($address) || empty($status) || empty($oldpassword) || empty($clean_password)){
         echo " is empty";
-    } elseif ($dbpassword !== $oldpassword) {
+    }elseif($dbpassword !== $oldpassword){
         echo "old password are not match";
-    } else {
-        $password = md5($clean_password);
-        $update = "UPDATE user SET name='$name', email='$email', password='$password', address= '$address',status='$status' WHERE id='$id'";
-        $result = mysqli_query($connect, $update);
-        if ($result > 0) {
+    }else{
+        $password=md5($clean_password);
+        $update="UPDATE user SET name='$name', email='$email', password='$password', address= '$address',status='$status' WHERE id='$id'";
+        $result=mysqli_query($connect,$update);
+        if($result>0){
             header("Location:index.php");
-        } else {
+        }else{
             echo "data incorect";
         }
-
     }
 }
+
 
 
 ?>
@@ -75,7 +76,7 @@ if (isset($_POST["updatedata"])) {
     <section>
         <div class="container-md p-4 m-4">
             <div class="addform">
-                <form action="update.php" method="POST">
+                <form id="updateForm" action="update.php" method="POST">
                     <div class="row g-3">
                         <div class="col m-4">
                             <input type="hidden" name="userid" value="<?php echo $userdata['id']; ?>"

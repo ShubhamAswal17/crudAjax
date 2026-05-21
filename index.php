@@ -51,7 +51,7 @@
                                 <td><?php echo $userdata['status']; ?></td>
                                 <td>
                                     <button class="btn btn-danger" data-id="<?php echo $userdata['id']; ?>">Delete</button>
-                                    <a href="update.php?id=<?php echo $userdata['id']; ?>" class="btn btn-primary m-3">Edit</a>
+                                    <button class="btn btn-primary" data-id="<?php echo $userdata['id']; ?>">Edit</button>
                                 </td>
                             </tr>
                             <?php
@@ -81,20 +81,23 @@
             })
 
         });
+        $(document).on('click','btn-primary',function(e){
+            e.preventDefault();
+            var id=$(this).data('id');
+            $.ajax({
+                url:"update.php?editid="+id,
+                type:"GET",
+                dataType:"json",
+                success:function(response){
+                    if(response.status==="success"){
+                        location.href="edit.php";
+                    }else if(response.status==="error"){
+                        alert(response.message);
+                    }
+                }
+            })
+        })
     </script>
 </body>
 
 </html>
-<?php
-require_once "connection.php";
-if (isset($_GET["deleteid"])) {
-    $id = $_GET['deleteid'];
-    $qryy = "DELETE FROM users WHERE id='$id'";
-    $qryyresult = mysqli_query($connect, $qryy);
-    if ($qryyresult > 0) {
-        header("location:index.php");
-    }
-}
-
-
-?>
