@@ -1,25 +1,27 @@
 <?php
-include "connection.php";
-  if(isset($_POST["formdata"])){
-        $name=$_POST["name"];
-        $email=$_POST["email"];
-        $clean_password=$_POST["password"];
-        $address=$_POST["address"];
-        $status=$_POST["status"];
-       if(empty($name) || empty($email) || empty($address) || empty($status) || empty($clean_password)){
-            echo " is empty";
+require_once "connection.php";
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $address = $_POST['address'];
+    $status = $_POST['status'];
+    $password = $_POST['password'];
+    if (empty($name) || empty($email) || empty($address) || empty($status) || empty($password)) {
+        echo "all fields are required";
+    } else {
+        $sql = "INSERT INTO users (name,email,address,status,password) VALUES ('$name','$email','$address','$status','$password')";
+        if (mysqli_query($connect, $sql)) {
+            echo json_encode([
+                'status' => 'success',
+                'message' => 'Data insertd successfully'
+            ]);
+        } else {
+            echo json_encode([
+                'status' => 'error',
+                'message' => mysqli_error($connect)
+            ]);
         }
-        else{
-            $password = md5($clean_password);
-            $qry="INSERT INTO user (name,email,password,address,status) VALUES ('$name','$email','$password','$address','$status')";
-            $result=mysqli_query($connect,$qry);
-            if($result>0){     
-             
-                echo json_encode(['status' => 'true', 'message' => $name]);                                   
-            }else{
-                echo json_encode(array("status"=>"false", "message"=>"data insertion failed"    ));
-            }
-           
-        }
-  }
+    }
+}
+
 ?>

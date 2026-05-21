@@ -10,14 +10,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-    </script>
+        </script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 
 <body>
     <section>
         <div class="container-md p-4 m-4">
             <div class="addform">
-                <form action="register.php" method="POST">
+                <form id="userformdata" action="register.php" method="POST">
                     <div class="row g-3">
                         <div class="col m-4">
                             <input type="text" name="name" class="form-control" placeholder="Enter Name"
@@ -25,9 +26,9 @@
                         </div>
                         <div class="col m-4">
                             <input type="email" name="email" class="form-control" placeholder="Enter  Email"
-                            aria-label="First name">
+                                aria-label="First name">
                         </div>
-                        
+
                     </div>
                     <div class="row g-3">
                         <div class="col m-4">
@@ -48,10 +49,15 @@
                         </div>
                     </div>
                     <button class="btn btn-primary m-3" type="submit" name="formdata">submit</button>
+<<<<<<< HEAD
+=======
+                    <div id="response"></div>
+>>>>>>> b09cf0b2c938511250f57c583df44f4fe084181b
                 </form>
             </div>
         </div>
     </section>
+<<<<<<< HEAD
     <script>
         $(document).ready(function(){
             $("form").on("submit", function(e){
@@ -109,3 +115,38 @@
 
 
 
+=======
+
+    <script>
+        $("#userformdata").submit(function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+            $.ajax({
+                url: "ajax.php",
+                type: "POST",
+                data: formData,
+
+                dataType: "json",
+                processData: false,
+                contentType: false,
+
+                beforeSend: function () {
+
+                    $("#response").html("Uploading...");
+
+                },
+                success: function (response) {
+
+                    if (response.status === "success") {
+
+                        location.href = "login.php";
+                    }
+
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
+>>>>>>> b09cf0b2c938511250f57c583df44f4fe084181b
